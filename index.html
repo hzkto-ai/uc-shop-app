@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Myxa UC Shop</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        body {
+            background: #d4e8d4;  /* светло‑зелёный фон */
+            min-height: 100vh;
+            padding: 16px;
+            color: #1e3a2f;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Снежинки */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(4px 4px at 10px 30px, rgba(255,255,255,0.8) 1px, transparent 2px),
+                radial-gradient(5px 5px at 90px 140px, rgba(255,255,255,0.7) 2px, transparent 3px),
+                radial-gradient(3px 3px at 160px 280px, rgba(255,255,255,0.9) 1px, transparent 2px),
+                radial-gradient(6px 6px at 230px 420px, rgba(255,255,255,0.8) 2px, transparent 4px),
+                radial-gradient(4px 4px at 320px 180px, rgba(255,255,255,0.8) 1px, transparent 3px),
+                radial-gradient(5px 5px at 400px 550px, rgba(255,255,255,0.9) 2px, transparent 3px),
+                radial-gradient(3px 3px at 480px 320px, rgba(255,255,255,0.7) 1px, transparent 2px),
+                radial-gradient(6px 6px at 550px 90px, rgba(255,255,255,0.8) 2px, transparent 4px),
+                radial-gradient(4px 4px at 620px 410px, rgba(255,255,255,0.9) 1px, transparent 2px),
+                radial-gradient(5px 5px at 700px 250px, rgba(255,255,255,0.8) 2px, transparent 3px),
+                radial-gradient(4px 4px at 30px 600px, rgba(255,255,255,0.8) 1px, transparent 2px),
+                radial-gradient(5px 5px at 250px 720px, rgba(255,255,255,0.7) 2px, transparent 3px),
+                radial-gradient(6px 6px at 450px 650px, rgba(255,255,255,0.9) 2px, transparent 4px),
+                radial-gradient(3px 3px at 650px 780px, rgba(255,255,255,0.8) 1px, transparent 2px);
+            background-repeat: repeat;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            color: #1e3a2f;
+        }
+
+        .header-left {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .header-left span {
+            color: #2d4a3a;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .close {
+            color: #2d4a3a;
+            font-size: 24px;
+            cursor: default;
+        }
+
+        .promo-badge {
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(2px);
+            border-radius: 100px;
+            padding: 8px 16px;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #1e3a2f;
+            border: 1px solid rgba(30,58,47,0.2);
+        }
+
+        .promo-badge span {
+            color: #1e5a3a;
+            font-weight: 600;
+        }
+
+        .product-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .product-card {
+            flex: 1;
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            padding: 16px;
+            border: 1px solid rgba(30,58,47,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .product-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e3a2f;
+            margin-bottom: 8px;
+        }
+
+        .price-block {
+            margin-bottom: 8px;
+        }
+
+        .new-price {
+            color: #1e5a3a;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .select-btn {
+            background: rgba(30,90,58,0.8);
+            border: 1px solid rgba(30,58,47,0.3);
+            color: white;
+            padding: 8px 0;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 12px;
+        }
+
+        .select-btn:active {
+            background: rgba(30,90,58,1);
+            transform: scale(0.98);
+        }
+
+        .quantity-selector {
+            margin: 10px 0;
+        }
+
+        .quantity-selector select {
+            background: rgba(255,255,255,0.4);
+            border: 1px solid rgba(30,58,47,0.2);
+            color: #1e3a2f;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            outline: none;
+            width: 100%;
+            font-weight: 500;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            border-top: 1px solid rgba(30,58,47,0.2);
+            font-size: 13px;
+            color: #2d4a3a;
+        }
+
+        /* Плашка на весь экран */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+            backdrop-filter: blur(3px);
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #d4e8d4;
+            z-index: 1000;
+            padding: 30px 20px;
+            overflow-y: auto;
+            animation: fadeIn 0.3s;
+        }
+
+        .popup-content {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1001;
+        }
+
+        .popup::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(4px 4px at 10px 30px, rgba(255,255,255,0.8) 1px, transparent 2px),
+                radial-gradient(5px 5px at 90px 140px, rgba(255,255,255,0.7) 2px, transparent 3px),
+                radial-gradient(3px 3px at 160px 280px, rgba(255,255,255,0.9) 1px, transparent 2px),
+                radial-gradient(6px 6px at 230px 420px, rgba(255,255,255,0.8) 2px, transparent 4px);
+            background-repeat: repeat;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .popup h2 {
+            color: #1e3a2f;
+            font-size: 32px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .popup .order-box {
+            background: rgba(255,255,255,0.3);
+            backdrop-filter: blur(4px);
+            border-radius: 30px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 1px solid rgba(30,58,47,0.15);
+            position: relative;
+            z-index: 1;
+        }
+
+        .popup .order-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(30,58,47,0.15);
+            font-size: 18px;
+            color: #1e3a2f;
+        }
+
+        .popup .order-row:last-child {
+            border-bottom: none;
+        }
+
+        .popup .order-row .value {
+            color: #1e5a3a;
+            font-weight: 600;
+        }
+
+        .popup .bank-box {
+            background: rgba(255,255,255,0.3);
+            backdrop-filter: blur(4px);
+            border-radius: 30px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 2px solid #1e5a3a;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .popup .bank-title {
+            color: #1e5a3a;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .popup .card-number {
+            font-family: monospace;
+            font-size: 24px;
+            color: #1e5a3a;
+            letter-spacing: 2px;
+            word-break: break-word;
+        }
+
+        .popup .phone {
+            font-size: 20px;
+            color: #1e5a3a;
+            margin: 15px 0;
+        }
+
+        .popup .instructions-box {
+            background: rgba(30,90,58,0.1);
+            border-left: 6px solid #1e5a3a;
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .popup .instructions-box h3 {
+            color: #1e5a3a;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        .popup .instructions-box li {
+            margin: 12px 0;
+            font-size: 17px;
+            color: #1e3a2f;
+        }
+
+        .popup .highlight {
+            color: #1e5a3a;
+            font-weight: 700;
+        }
+
+        .popup .wait-time {
+            background: rgba(255,255,255,0.3);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 18px;
+            color: #1e5a3a;
+            position: relative;
+            z-index: 1;
+        }
+
+        .popup .close-btn {
+            background: #1e5a3a;
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay" onclick="closePopup()"></div>
+    
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <h2>✅ ВАШ ЗАКАЗ</h2>
+            <div class="order-box">
+                <div class="order-row">
+                    <span>Товар</span>
+                    <span class="value" id="popupProduct"></span>
+                </div>
+                <div class="order-row">
+                    <span>Количество</span>
+                    <span class="value" id="popupQuantity"></span>
+                </div>
+                <div class="order-row">
+                    <span>Сумма</span>
+                    <span class="value" id="popupTotal"></span>
+                </div>
+            </div>
+            <div class="bank-box">
+                <div class="bank-title">🏦 ОЗОН БАНК</div>
+                <div class="card-number">2204 3206 8293 9709</div>
+                <div class="phone">📞 +7 952 303-09-42</div>
+            </div>
+            <div class="instructions-box">
+                <h3>📋 ЧТО ДАЛЬШЕ</h3>
+                <ol style="padding-left: 20px;">
+                    <li><span class="highlight">ШАГ 1:</span> Переведите <span id="popupTotalStep" class="highlight"></span> на карту ОЗОН БАНК</li>
+                    <li><span class="highlight">ШАГ 2:</span> Напишите в чат ваш <span class="highlight">ИГРОВОЙ ID</span> (пример: 1234567890)</li>
+                    <li><span class="highlight">ШАГ 3:</span> Отправьте <span class="highlight">ФОТО ЧЕКА</span> в этот же чат</li>
+                    <li><span class="highlight">ШАГ 4:</span> Дождитесь <span class="highlight">ПОДТВЕРЖДЕНИЯ</span> от администратора</li>
+                </ol>
+            </div>
+            <div class="wait-time">
+                ⏱ UC будет начислен в течение 5–15 минут после подтверждения
+            </div>
+            <button class="close-btn" onclick="closePopup()">ПОНЯТНО, ВЕРНУТЬСЯ В ЧАТ</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <span class="close">←</span>
+                <span>XASHIPA</span>
+                <span>Все игры</span>
+                <span>Анонсы</span>
+            </div>
+            <div>11:07</div>
+        </div>
+
+        <div class="promo-badge">
+            Снижение комиссии STEAM до 2% • <span>Prime</span> • PORSCHE
+        </div>
+
+        <!-- Ряд 1: 60 UC и 325 UC -->
+        <div class="product-row">
+            <div class="product-card">
+                <div class="product-title">60 UC</div>
+                <div class="price-block">
+                    <div class="new-price">80 ₽</div>
+                </div>
+                <div class="quantity-selector">
+                    <select id="qty-60">
+                        <option value="1">1 шт</option>
+                        <option value="2">2 шт</option>
+                        <option value="3">3 шт</option>
+                        <option value="4">4 шт</option>
+                        <option value="5">5 шт</option>
+                        <option value="10">10 шт</option>
+                    </select>
+                </div>
+                <div class="select-btn" onclick="buyUC('60 UC', 80, 'qty-60')">Выбрать</div>
+            </div>
+            <div class="product-card">
+                <div class="product-title">325 UC</div>
+                <div class="price-block">
+                    <div class="new-price">400 ₽</div>
+                </div>
+                <div class="quantity-selector">
+                    <select id="qty-325">
+                        <option value="1">1 шт</option>
+                        <option value="2">2 шт</option>
+                        <option value="3">3 шт</option>
+                        <option value="4">4 шт</option>
+                        <option value="5">5 шт</option>
+                        <option value="10">10 шт</option>
+                    </select>
+                </div>
+                <div class="select-btn" onclick="buyUC('325 UC', 400, 'qty-325')">Выбрать</div>
+            </div>
+        </div>
+
+        <!-- Ряд 2: 660 UC и 985 UC -->
+        <div class="product-row">
+            <div class="product-card">
+                <div class="product-title">660 UC</div>
+                <div class="price-block">
+                    <div class="new-price">800 ₽</div>
+                </div>
+                <div class="quantity-selector">
+                    <select id="qty-660">
+                        <option value="1">1 шт</option>
+                        <option value="2">2 шт</option>
+                        <option value="3">3 шт</option>
+                        <option value="4">4 шт</option>
+                        <option value="5">5 шт</option>
+                        <option value="10">10 шт</option>
+                    </select>
+                </div>
+                <div class="select-btn" onclick="buyUC('660 UC', 800, 'qty-660')">Выбрать</div>
+            </div>
+            <div class="product-card">
+                <div class="product-title">985 UC</div>
+                <div class="price-block">
+                    <div class="new-price">1210 ₽</div>
+                </div>
+                <div class="quantity-selector">
+                    <select id="qty-985">
+                        <option value="1">1 шт</option>
+                        <option value="2">2 шт</option>
+                        <option value="3">3 шт</option>
+                        <option value="4">4 шт</option>
+                        <option value="5">5 шт</option>
+                        <option value="10">10 шт</option>
+                    </select>
+                </div>
+                <div class="select-btn" onclick="buyUC('985 UC', 1210, 'qty-985')">Выбрать</div>
+            </div>
+        </div>
+
+        <!-- Ряд 3: 1310 UC и 1800 UC -->
+        <div class="product-row">
+            <div class="product-card">
+                <div class="product-title">1310 UC</div>
+                <div class="price-block">
+                    <div class="new-price">1588 ₽</div>
+                </div>
+                <div class="quantity-selector">
+                    <select id="qty-1310">
+                        <option value="1">1 шт</option>
+                        <option value="2">2 шт</option>
+                        <option value="3">3 шт</option>
+                        <option value="4">4 шт</option>
+                        <option value="5">5 шт</option>
+                        <option value="10">10 шт</option>
+                    </select>
+                </div>
+                <div class="select-btn" onclick="buyUC('1310 UC', 1588, 'qty-1310')">Выбрать</div>
+            </div>
+            <div class="product-card">
+                <div class="product-title">1800 UC</div>
+                <div class="price-block">
+                    <div class="new-price">1956 ₽</div>
+                </div>
+                <div class="quantity-selector">
+                    <select id="qty-1800">
+                        <option value="1">1 шт</option>
+                        <option value="2">2 шт</option>
+                        <option value="3">3 шт</option>
+                        <option value="4">4 шт</option>
+                        <option value="5">5 шт</option>
+                        <option value="10">10 шт</option>
+                    </select>
+                </div>
+                <div class="select-btn" onclick="buyUC('1800 UC', 1956, 'qty-1800')">Выбрать</div>
+            </div>
+        </div>
+
+        <!-- Ряд 4: 3850 UC и 5650 UC -->
+        <div class="product-row">
+            <div class="product-card">
+                <div class="product-title">3850 UC</div>
+                <div class="price-block">
+                    <div class="new-price">4100 ₽</div>
+                </div>
+                <div class="quantity-selector">
+                    <select id="qty-3850">
+                        <option value="1">1 шт</option>
+                        <option value="2">2 шт</option>
+                        <option value="3">3 шт</option>
+                        <option value="4">4 шт</option>
+                        <option value="5">5 шт</option>
+                        <option value="10">10 шт</option>
+                    </select>
+                </div>
+                <div class="select-btn" onclick="buyUC('3850 UC', 4100, 'qty-3850')">Выбрать</div>
+            </div>
+            <div class="product-card">
+                <div class="product-title">5650 UC</div>
+                <div class="price-block">
+                    <div class="new-price">5950 ₽</div>
+                </div>
+                <div class="quantity-selector">
+                    <select id="qty-5650">
+                        <option value="1">1 шт</option>
+                        <option value="2">2 шт</option>
+                        <option value="3">3 шт</option>
+                        <option value="4">4 шт</option>
+                        <option value="5">5 шт</option>
+                        <option value="10">10 шт</option>
+                    </select>
+                </div>
+                <div class="select-btn" onclick="buyUC('5650 UC', 5950, 'qty-5650')">Выбрать</div>
+            </div>
+        </div>
+
+        <!-- Ряд 5: 8100 UC и 11950 UC -->
+        <div class="product-row">
+            <div class="product-card">
+                <div class="product-title">8100 UC</div>
+                <div class="price-block">
+                    <div class="new-price">7900 ₽</div>
+                </div>
+                <div class="quantity-selector">
+                    <select id="qty-8100">
+                        <option value="1">1 шт</option>
+                        <option value="2">2 шт</option>
+                        <option value="3">3 шт</option>
+                        <option value="4">4 шт</option>
+                        <option value="5">5 шт</option>
+                        <option value="10">10 шт</option>
+                    </select>
+                </div>
+                <div class="select-btn" onclick="buyUC('8100 UC', 7900, 'qty-8100')">Выбрать</div>
+            </div>
+            <div class="product-card">
+                <div class="product-title">11950 UC</div>
+                <div class="price-block">
+                    <div class="new-price">12000 ₽</div>
+                </div>
+                <div class="quantity-selector">
+                    <select id="qty-11950">
+                        <option value="1">1 шт</option>
+                        <option value="2">2 шт</option>
+                        <option value="3">3 шт</option>
+                        <option value="4">4 шт</option>
+                        <option value="5">5 шт</option>
+                        <option value="10">10 шт</option>
+                    </select>
+                </div>
+                <div class="select-btn" onclick="buyUC('11950 UC', 12000, 'qty-11950')">Выбрать</div>
+            </div>
+        </div>
+
+        <!-- Ряд 6: 16200 UC и 24300 UC -->
+        <div class="product-row">
+            <div class="product-card">
+                <div class="product-title">16200 UC</div>
+                <div class="price-block">
+                    <div class="new-price">16600 ₽</div>
+                </div>
+                <div class="quantity-selector">
+                    <select id="qty-16200">
+                        <option value="1">1 шт</option>
+                        <option value="2">2 шт</option>
+                        <option value="3">3 шт</option>
+                        <option value="4">4 шт</option>
+                        <option value="5">5 шт</option>
+                        <option value="10">10 шт</option>
+                    </select>
+                </div>
+                <div class="select-btn" onclick="buyUC('16200 UC', 16600, 'qty-16200')">Выбрать</div>
+            </div>
+            <div class="product-card">
+                <div class="product-title">24300 UC</div>
+                <div class="price-block">
+                    <div class="new-price">23500 ₽</div>
+                </div>
+                <div class="quantity-selector">
+                    <select id="qty-24300">
+                        <option value="1">1 шт</option>
+                        <option value="2">2 шт</option>
+                        <option value="3">3 шт</option>
+                        <option value="4">4 шт</option>
+                        <option value="5">5 шт</option>
+                        <option value="10">10 шт</option>
+                    </select>
+                </div>
+                <div class="select-btn" onclick="buyUC('24300 UC', 23500, 'qty-24300')">Выбрать</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            👤 Администратор: @hzkto_ai
+        </div>
+    </div>
+
+    <script>
+        function buyUC(product, basePrice, qtyId) {
+            if (!window.Telegram?.WebApp) {
+                alert('❌ Откройте через Telegram бота!');
+                return;
+            }
+
+            let qty = document.getElementById(qtyId).value;
+            let total = basePrice * qty;
+
+            Telegram.WebApp.sendData(JSON.stringify({
+                action: 'buy',
+                product: product,
+                price: basePrice,
+                quantity: parseInt(qty),
+                total: total
+            }));
+
+            document.getElementById('popupProduct').innerHTML = product;
+            document.getElementById('popupQuantity').innerHTML = qty + ' шт';
+            document.getElementById('popupTotal').innerHTML = total + ' ₽';
+            document.getElementById('popupTotalStep').innerHTML = total + ' ₽';
+
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+            if (window.Telegram?.WebApp) {
+                Telegram.WebApp.close();
+            }
+        }
+    </script>
+</body>
+                      </html>           

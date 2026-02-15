@@ -6,32 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-        }
-
         body {
+            background: #d4e8d4;
             min-height: 100vh;
             padding: 16px;
             color: #1e3a2f;
             position: relative;
             overflow-x: hidden;
-            background: url('https://images.unsplash.com/photo-1501631259223-89d4e246ed23?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
         }
 
-        /* Лёгкая тёмная вуаль для читаемости */
-        body::after {
+        body::before {
             content: '';
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255, 255, 255, 0.1);
+            background-image: 
+                radial-gradient(4px 4px at 10px 30px, rgba(255,255,255,0.8) 1px, transparent 2px),
+                radial-gradient(5px 5px at 90px 140px, rgba(255,255,255,0.7) 2px, transparent 3px),
+                radial-gradient(3px 3px at 160px 280px, rgba(255,255,255,0.9) 1px, transparent 2px),
+                radial-gradient(6px 6px at 230px 420px, rgba(255,255,255,0.8) 2px, transparent 4px),
+                radial-gradient(4px 4px at 320px 180px, rgba(255,255,255,0.8) 1px, transparent 3px),
+                radial-gradient(5px 5px at 400px 550px, rgba(255,255,255,0.9) 2px, transparent 3px),
+                radial-gradient(3px 3px at 480px 320px, rgba(255,255,255,0.7) 1px, transparent 2px),
+                radial-gradient(6px 6px at 550px 90px, rgba(255,255,255,0.8) 2px, transparent 4px);
+            background-repeat: repeat;
             pointer-events: none;
             z-index: 0;
         }
@@ -50,7 +51,6 @@
             color: white;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
             text-align: center;
-            letter-spacing: 1px;
         }
 
         .product-row {
@@ -67,12 +67,6 @@
             padding: 16px;
             border: 1px solid rgba(255, 255, 255, 0.5);
             box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-            transition: all 0.2s;
-        }
-
-        .product-card:active {
-            transform: scale(0.98);
-            background: rgba(255, 255, 255, 0.8);
         }
 
         .product-title {
@@ -82,14 +76,22 @@
             margin-bottom: 8px;
         }
 
-        .price-block {
-            margin-bottom: 8px;
-        }
-
         .new-price {
             color: #2c3e50;
             font-size: 18px;
             font-weight: 700;
+            margin: 8px 0;
+        }
+
+        select {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(44, 62, 80, 0.2);
+            color: #2c3e50;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            width: 100%;
+            margin: 8px 0;
         }
 
         .select-btn {
@@ -103,41 +105,17 @@
             width: 100%;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 12px;
-        }
-
-        .select-btn:active {
-            background: white;
-            transform: scale(0.98);
-        }
-
-        .quantity-selector {
-            margin: 10px 0;
-        }
-
-        .quantity-selector select {
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(44, 62, 80, 0.2);
-            color: #2c3e50;
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 13px;
-            outline: none;
-            width: 100%;
-            font-weight: 500;
+            margin-top: 8px;
         }
 
         .footer {
             text-align: center;
             margin-top: 40px;
             padding: 20px;
-            font-size: 14px;
             color: white;
             text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
         }
 
-        /* Плашка на весь экран */
         .overlay {
             display: none;
             position: fixed;
@@ -147,7 +125,6 @@
             bottom: 0;
             background: rgba(0,0,0,0.5);
             z-index: 999;
-            backdrop-filter: blur(3px);
         }
 
         .popup {
@@ -161,14 +138,11 @@
             z-index: 1000;
             padding: 30px 20px;
             overflow-y: auto;
-            animation: fadeIn 0.3s;
         }
 
         .popup-content {
             max-width: 500px;
             margin: 0 auto;
-            position: relative;
-            z-index: 1001;
         }
 
         .popup h2 {
@@ -183,7 +157,6 @@
             border-radius: 30px;
             padding: 30px;
             margin: 20px 0;
-            border: 1px solid rgba(44, 62, 80, 0.1);
         }
 
         .popup .order-row {
@@ -192,11 +165,6 @@
             padding: 12px 0;
             border-bottom: 1px solid rgba(44, 62, 80, 0.1);
             font-size: 18px;
-            color: #2c3e50;
-        }
-
-        .popup .order-row:last-child {
-            border-bottom: none;
         }
 
         .popup .order-row .value {
@@ -281,11 +249,6 @@
             cursor: pointer;
             margin-top: 20px;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
     </style>
 </head>
 <body>
@@ -317,14 +280,12 @@
                 <h3>📋 ЧТО ДАЛЬШЕ</h3>
                 <ol style="padding-left: 20px;">
                     <li><span class="highlight">ШАГ 1:</span> Переведите <span id="popupTotalStep" class="highlight"></span> на карту ОЗОН БАНК</li>
-                    <li><span class="highlight">ШАГ 2:</span> Напишите в чат ваш <span class="highlight">ИГРОВОЙ ID</span> (пример: 1234567890)</li>
-                    <li><span class="highlight">ШАГ 3:</span> Отправьте <span class="highlight">ФОТО ЧЕКА</span> в этот же чат</li>
-                    <li><span class="highlight">ШАГ 4:</span> Дождитесь <span class="highlight">ПОДТВЕРЖДЕНИЯ</span> от администратора</li>
+                    <li><span class="highlight">ШАГ 2:</span> Напишите в чат ваш <span class="highlight">ИГРОВОЙ ID</span></li>
+                    <li><span class="highlight">ШАГ 3:</span> Отправьте <span class="highlight">ФОТО ЧЕКА</span></li>
+                    <li><span class="highlight">ШАГ 4:</span> Дождитесь подтверждения</li>
                 </ol>
             </div>
-            <div class="wait-time">
-                ⏱ UC будет начислен в течение 5–15 минут после подтверждения
-            </div>
+            <div class="wait-time">⏱ UC через 5–15 минут</div>
             <button class="close-btn" onclick="closePopup()">ПОНЯТНО, ВЕРНУТЬСЯ В ЧАТ</button>
         </div>
     </div>
@@ -332,230 +293,182 @@
     <div class="container">
         <h1>☁️ Myxa UC shop</h1>
 
-        <!-- Ряд 1: 60 UC и 325 UC -->
+        <!-- 60 UC и 325 UC -->
         <div class="product-row">
             <div class="product-card">
                 <div class="product-title">60 UC</div>
-                <div class="price-block">
-                    <div class="new-price">80 ₽</div>
-                </div>
-                <div class="quantity-selector">
-                    <select id="qty-60">
-                        <option value="1">1 шт</option>
-                        <option value="2">2 шт</option>
-                        <option value="3">3 шт</option>
-                        <option value="4">4 шт</option>
-                        <option value="5">5 шт</option>
-                        <option value="10">10 шт</option>
-                    </select>
-                </div>
+                <div class="new-price">80 ₽</div>
+                <select id="qty-60">
+                    <option value="1">1 шт</option>
+                    <option value="2">2 шт</option>
+                    <option value="3">3 шт</option>
+                    <option value="4">4 шт</option>
+                    <option value="5">5 шт</option>
+                    <option value="10">10 шт</option>
+                </select>
                 <div class="select-btn" onclick="buyUC('60 UC', 80, 'qty-60')">Выбрать</div>
             </div>
             <div class="product-card">
                 <div class="product-title">325 UC</div>
-                <div class="price-block">
-                    <div class="new-price">400 ₽</div>
-                </div>
-                <div class="quantity-selector">
-                    <select id="qty-325">
-                        <option value="1">1 шт</option>
-                        <option value="2">2 шт</option>
-                        <option value="3">3 шт</option>
-                        <option value="4">4 шт</option>
-                        <option value="5">5 шт</option>
-                        <option value="10">10 шт</option>
-                    </select>
-                </div>
+                <div class="new-price">400 ₽</div>
+                <select id="qty-325">
+                    <option value="1">1 шт</option>
+                    <option value="2">2 шт</option>
+                    <option value="3">3 шт</option>
+                    <option value="4">4 шт</option>
+                    <option value="5">5 шт</option>
+                    <option value="10">10 шт</option>
+                </select>
                 <div class="select-btn" onclick="buyUC('325 UC', 400, 'qty-325')">Выбрать</div>
             </div>
         </div>
 
-        <!-- Ряд 2: 660 UC и 985 UC -->
+        <!-- 660 UC и 985 UC -->
         <div class="product-row">
             <div class="product-card">
                 <div class="product-title">660 UC</div>
-                <div class="price-block">
-                    <div class="new-price">800 ₽</div>
-                </div>
-                <div class="quantity-selector">
-                    <select id="qty-660">
-                        <option value="1">1 шт</option>
-                        <option value="2">2 шт</option>
-                        <option value="3">3 шт</option>
-                        <option value="4">4 шт</option>
-                        <option value="5">5 шт</option>
-                        <option value="10">10 шт</option>
-                    </select>
-                </div>
+                <div class="new-price">800 ₽</div>
+                <select id="qty-660">
+                    <option value="1">1 шт</option>
+                    <option value="2">2 шт</option>
+                    <option value="3">3 шт</option>
+                    <option value="4">4 шт</option>
+                    <option value="5">5 шт</option>
+                    <option value="10">10 шт</option>
+                </select>
                 <div class="select-btn" onclick="buyUC('660 UC', 800, 'qty-660')">Выбрать</div>
             </div>
             <div class="product-card">
                 <div class="product-title">985 UC</div>
-                <div class="price-block">
-                    <div class="new-price">1210 ₽</div>
-                </div>
-                <div class="quantity-selector">
-                    <select id="qty-985">
-                        <option value="1">1 шт</option>
-                        <option value="2">2 шт</option>
-                        <option value="3">3 шт</option>
-                        <option value="4">4 шт</option>
-                        <option value="5">5 шт</option>
-                        <option value="10">10 шт</option>
-                    </select>
-                </div>
+                <div class="new-price">1210 ₽</div>
+                <select id="qty-985">
+                    <option value="1">1 шт</option>
+                    <option value="2">2 шт</option>
+                    <option value="3">3 шт</option>
+                    <option value="4">4 шт</option>
+                    <option value="5">5 шт</option>
+                    <option value="10">10 шт</option>
+                </select>
                 <div class="select-btn" onclick="buyUC('985 UC', 1210, 'qty-985')">Выбрать</div>
             </div>
         </div>
 
-        <!-- Ряд 3: 1310 UC и 1800 UC -->
+        <!-- 1310 UC и 1800 UC -->
         <div class="product-row">
             <div class="product-card">
                 <div class="product-title">1310 UC</div>
-                <div class="price-block">
-                    <div class="new-price">1588 ₽</div>
-                </div>
-                <div class="quantity-selector">
-                    <select id="qty-1310">
-                        <option value="1">1 шт</option>
-                        <option value="2">2 шт</option>
-                        <option value="3">3 шт</option>
-                        <option value="4">4 шт</option>
-                        <option value="5">5 шт</option>
-                        <option value="10">10 шт</option>
-                    </select>
-                </div>
+                <div class="new-price">1588 ₽</div>
+                <select id="qty-1310">
+                    <option value="1">1 шт</option>
+                    <option value="2">2 шт</option>
+                    <option value="3">3 шт</option>
+                    <option value="4">4 шт</option>
+                    <option value="5">5 шт</option>
+                    <option value="10">10 шт</option>
+                </select>
                 <div class="select-btn" onclick="buyUC('1310 UC', 1588, 'qty-1310')">Выбрать</div>
             </div>
             <div class="product-card">
                 <div class="product-title">1800 UC</div>
-                <div class="price-block">
-                    <div class="new-price">1956 ₽</div>
-                </div>
-                <div class="quantity-selector">
-                    <select id="qty-1800">
-                        <option value="1">1 шт</option>
-                        <option value="2">2 шт</option>
-                        <option value="3">3 шт</option>
-                        <option value="4">4 шт</option>
-                        <option value="5">5 шт</option>
-                        <option value="10">10 шт</option>
-                    </select>
-                </div>
+                <div class="new-price">1956 ₽</div>
+                <select id="qty-1800">
+                    <option value="1">1 шт</option>
+                    <option value="2">2 шт</option>
+                    <option value="3">3 шт</option>
+                    <option value="4">4 шт</option>
+                    <option value="5">5 шт</option>
+                    <option value="10">10 шт</option>
+                </select>
                 <div class="select-btn" onclick="buyUC('1800 UC', 1956, 'qty-1800')">Выбрать</div>
             </div>
         </div>
 
-        <!-- Ряд 4: 3850 UC и 5650 UC -->
+        <!-- 3850 UC и 5650 UC -->
         <div class="product-row">
             <div class="product-card">
                 <div class="product-title">3850 UC</div>
-                <div class="price-block">
-                    <div class="new-price">4100 ₽</div>
-                </div>
-                <div class="quantity-selector">
-                    <select id="qty-3850">
-                        <option value="1">1 шт</option>
-                        <option value="2">2 шт</option>
-                        <option value="3">3 шт</option>
-                        <option value="4">4 шт</option>
-                        <option value="5">5 шт</option>
-                        <option value="10">10 шт</option>
-                    </select>
-                </div>
+                <div class="new-price">4100 ₽</div>
+                <select id="qty-3850">
+                    <option value="1">1 шт</option>
+                    <option value="2">2 шт</option>
+                    <option value="3">3 шт</option>
+                    <option value="4">4 шт</option>
+                    <option value="5">5 шт</option>
+                    <option value="10">10 шт</option>
+                </select>
                 <div class="select-btn" onclick="buyUC('3850 UC', 4100, 'qty-3850')">Выбрать</div>
             </div>
             <div class="product-card">
                 <div class="product-title">5650 UC</div>
-                <div class="price-block">
-                    <div class="new-price">5950 ₽</div>
-                </div>
-                <div class="quantity-selector">
-                    <select id="qty-5650">
-                        <option value="1">1 шт</option>
-                        <option value="2">2 шт</option>
-                        <option value="3">3 шт</option>
-                        <option value="4">4 шт</option>
-                        <option value="5">5 шт</option>
-                        <option value="10">10 шт</option>
-                    </select>
-                </div>
+                <div class="new-price">5950 ₽</div>
+                <select id="qty-5650">
+                    <option value="1">1 шт</option>
+                    <option value="2">2 шт</option>
+                    <option value="3">3 шт</option>
+                    <option value="4">4 шт</option>
+                    <option value="5">5 шт</option>
+                    <option value="10">10 шт</option>
+                </select>
                 <div class="select-btn" onclick="buyUC('5650 UC', 5950, 'qty-5650')">Выбрать</div>
             </div>
         </div>
 
-        <!-- Ряд 5: 8100 UC и 11950 UC -->
+        <!-- 8100 UC и 11950 UC -->
         <div class="product-row">
             <div class="product-card">
                 <div class="product-title">8100 UC</div>
-                <div class="price-block">
-                    <div class="new-price">7900 ₽</div>
-                </div>
-                <div class="quantity-selector">
-                    <select id="qty-8100">
-                        <option value="1">1 шт</option>
-                        <option value="2">2 шт</option>
-                        <option value="3">3 шт</option>
-                        <option value="4">4 шт</option>
-                        <option value="5">5 шт</option>
-                        <option value="10">10 шт</option>
-                    </select>
-                </div>
+                <div class="new-price">7900 ₽</div>
+                <select id="qty-8100">
+                    <option value="1">1 шт</option>
+                    <option value="2">2 шт</option>
+                    <option value="3">3 шт</option>
+                    <option value="4">4 шт</option>
+                    <option value="5">5 шт</option>
+                    <option value="10">10 шт</option>
+                </select>
                 <div class="select-btn" onclick="buyUC('8100 UC', 7900, 'qty-8100')">Выбрать</div>
             </div>
             <div class="product-card">
                 <div class="product-title">11950 UC</div>
-                <div class="price-block">
-                    <div class="new-price">12000 ₽</div>
-                </div>
-                <div class="quantity-selector">
-                    <select id="qty-11950">
-                        <option value="1">1 шт</option>
-                        <option value="2">2 шт</option>
-                        <option value="3">3 шт</option>
-                        <option value="4">4 шт</option>
-                        <option value="5">5 шт</option>
-                        <option value="10">10 шт</option>
-                    </select>
-                </div>
+                <div class="new-price">12000 ₽</div>
+                <select id="qty-11950">
+                    <option value="1">1 шт</option>
+                    <option value="2">2 шт</option>
+                    <option value="3">3 шт</option>
+                    <option value="4">4 шт</option>
+                    <option value="5">5 шт</option>
+                    <option value="10">10 шт</option>
+                </select>
                 <div class="select-btn" onclick="buyUC('11950 UC', 12000, 'qty-11950')">Выбрать</div>
             </div>
         </div>
 
-        <!-- Ряд 6: 16200 UC и 24300 UC -->
+        <!-- 16200 UC и 24300 UC -->
         <div class="product-row">
             <div class="product-card">
                 <div class="product-title">16200 UC</div>
-                <div class="price-block">
-                    <div class="new-price">16600 ₽</div>
-                </div>
-                <div class="quantity-selector">
-                    <select id="qty-16200">
-                        <option value="1">1 шт</option>
-                        <option value="2">2 шт</option>
-                        <option value="3">3 шт</option>
-                        <option value="4">4 шт</option>
-                        <option value="5">5 шт</option>
-                        <option value="10">10 шт</option>
-                    </select>
-                </div>
+                <div class="new-price">16600 ₽</div>
+                <select id="qty-16200">
+                    <option value="1">1 шт</option>
+                    <option value="2">2 шт</option>
+                    <option value="3">3 шт</option>
+                    <option value="4">4 шт</option>
+                    <option value="5">5 шт</option>
+                    <option value="10">10 шт</option>
+                </select>
                 <div class="select-btn" onclick="buyUC('16200 UC', 16600, 'qty-16200')">Выбрать</div>
             </div>
             <div class="product-card">
                 <div class="product-title">24300 UC</div>
-                <div class="price-block">
-                    <div class="new-price">23500 ₽</div>
-                </div>
-                <div class="quantity-selector">
-                    <select id="qty-24300">
-                        <option value="1">1 шт</option>
-                        <option value="2">2 шт</option>
-                        <option value="3">3 шт</option>
-                        <option value="4">4 шт</option>
-                        <option value="5">5 шт</option>
-                        <option value="10">10 шт</option>
-                    </select>
-                </div>
+                <div class="new-price">23500 ₽</div>
+                <select id="qty-24300">
+                    <option value="1">1 шт</option>
+                    <option value="2">2 шт</option>
+                    <option value="3">3 шт</option>
+                    <option value="4">4 шт</option>
+                    <option value="5">5 шт</option>
+                    <option value="10">10 шт</option>
+                </select>
                 <div class="select-btn" onclick="buyUC('24300 UC', 23500, 'qty-24300')">Выбрать</div>
             </div>
         </div>
@@ -566,19 +479,19 @@
     </div>
 
     <script>
-        function buyUC(product, basePrice, qtyId) {
+        function buyUC(product, price, qtyId) {
             if (!window.Telegram?.WebApp) {
                 alert('❌ Откройте через Telegram бота!');
                 return;
             }
 
             let qty = document.getElementById(qtyId).value;
-            let total = basePrice * qty;
+            let total = price * qty;
 
             Telegram.WebApp.sendData(JSON.stringify({
                 action: 'buy',
                 product: product,
-                price: basePrice,
+                price: price,
                 quantity: parseInt(qty),
                 total: total
             }));
@@ -601,4 +514,4 @@
         }
     </script>
 </body>
-  </html>
+</html>
